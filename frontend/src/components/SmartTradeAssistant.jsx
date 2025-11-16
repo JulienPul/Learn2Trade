@@ -131,18 +131,42 @@ export default function SmartTradeAssistant({ positions = [], totalValue = 0 }) 
       let alerts = [];
 
       // Alertes basées sur les positions actuelles
-      if (hasPosition) {
-        const pnl = Number(position?.unrealized_pnl_abs || 0);
-        const pnlPct = Number(position?.unrealized_pnl_pct || 0);
+      if (hasPosition && position) {
+        // Calculer PnL si pas déjà présent
+        let pnl = Number(position.unrealized_pnl_abs);
+        let pnlPct = Number(position.unrealized_pnl_pct);
 
-        // Alerte si grosse perte sur position ouverte (seuil à -5% au lieu de -10%)
+        // Si les valeurs ne sont pas définies, les calculer manuellement
+        if (isNaN(pnl) || isNaN(pnlPct)) {
+          const quantity = Number(position.quantity || 0);
+          const avgPrice = Number(position.average_price || position.avg_price || 0);
+          const currentPrice = data.price;
+
+          if (quantity && avgPrice && currentPrice) {
+            pnl = (currentPrice - avgPrice) * quantity;
+            pnlPct = ((currentPrice - avgPrice) / avgPrice) * 100;
+
+            console.log(`📊 [Alerts] Calcul PnL pour ${symbol}:`, {
+              quantity,
+              avgPrice,
+              currentPrice,
+              pnl: pnl.toFixed(2),
+              pnlPct: pnlPct.toFixed(2)
+            });
+          } else {
+            pnl = 0;
+            pnlPct = 0;
+          }
+        }
+
+        // Alerte si grosse perte sur position ouverte (seuil à -5%)
         if (pnl < 0 && pnlPct < -5) {
           alerts.push({
             type: 'danger',
             message: `Position en perte ${pnlPct.toFixed(1)}% - Envisager stop-loss`
           });
         }
-        // Alerte si bon profit à sécuriser (seuil à +8% au lieu de +15%)
+        // Alerte si bon profit à sécuriser (seuil à +8%)
         else if (pnl > 0 && pnlPct > 8) {
           alerts.push({
             type: 'success',
