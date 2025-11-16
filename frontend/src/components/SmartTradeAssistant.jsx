@@ -6,6 +6,8 @@ import MiniChart from './MiniChart';
 import { useCryptoData } from '../hooks/useCryptoData';
 import { useAdvancedSignals } from '../hooks/useAdvancedSignals';
 import TechnicalAnalysisModal from './TechnicalAnalysisModal';
+import { MemeImage } from './MemeDisplay';
+import { getMemeForSignal } from '../utils/cryptoMemes';
 
 const TABS = [
   { id: 'analytics', label: 'Analytics', icon: PieChart },
@@ -214,17 +216,27 @@ export default function SmartTradeAssistant({ positions = [], totalValue = 0 }) 
     });
   }, [cryptoData, positions]);
 
-  const renderAnalytics = () => (
+  const renderAnalytics = () => {
+    const gainerMeme = getMemeForSignal('BUY', 85, analytics.topGainer.change);
+    const loserMeme = getMemeForSignal('SELL', 85, analytics.topLoser.change);
+
+    return (
     <div className="space-y-4">
-      {/* Performance */}
+      {/* Performance avec mèmes */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-accent rounded-lg p-3">
-          <div className="text-xs text-muted-foreground mb-1">🔥 Top Gainer (24h)</div>
+        <div className="bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20 rounded-lg p-3">
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-xs text-muted-foreground">🔥 Top Gainer (24h)</div>
+            <MemeImage meme={gainerMeme} size="small" />
+          </div>
           <div className="font-semibold text-card-foreground">{analytics.topGainer.symbol}</div>
           <div className="text-sm text-green-600">+{analytics.topGainer.change.toFixed(1)}%</div>
         </div>
-        <div className="bg-accent rounded-lg p-3">
-          <div className="text-xs text-muted-foreground mb-1">📉 Top Loser (24h)</div>
+        <div className="bg-gradient-to-br from-red-500/10 to-red-500/5 border border-red-500/20 rounded-lg p-3">
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-xs text-muted-foreground">📉 Top Loser (24h)</div>
+            <MemeImage meme={loserMeme} size="small" />
+          </div>
           <div className="font-semibold text-card-foreground">{analytics.topLoser.symbol}</div>
           <div className="text-sm text-red-600">{analytics.topLoser.change.toFixed(1)}%</div>
         </div>
@@ -301,7 +313,8 @@ export default function SmartTradeAssistant({ positions = [], totalValue = 0 }) 
         </div>
       )}
     </div>
-  );
+    );
+  };
 
   const renderAlerts = () => {
     const alertSuggestions = suggestions.filter(s => s.alerts && s.alerts.length > 0);
@@ -529,6 +542,21 @@ export default function SmartTradeAssistant({ positions = [], totalValue = 0 }) 
                   </div>
                 ))}
               </div>
+
+              {/* Meme contextuel */}
+              {(() => {
+                const meme = getMemeForSignal(suggestion.action, suggestion.confidence, suggestion.change24h);
+                return (
+                  <div className="mb-3 flex items-center gap-3 p-3 bg-accent/40 rounded-lg border border-border/50">
+                    <MemeImage meme={meme} size="small" className="flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium text-card-foreground line-clamp-2">
+                        {meme.message}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Bouton Analyse Complète */}
               <button
