@@ -43,11 +43,35 @@ export default function MemeDisplay({
 
   if (!isVisible || !meme) return null;
 
-  // Tailles d'image
+  // Tailles d'emoji/image
   const sizeClasses = {
-    small: 'w-24 h-24',
-    medium: 'w-32 h-32',
-    large: 'w-48 h-48',
+    small: { container: 'w-24 h-24', text: 'text-6xl' },
+    medium: { container: 'w-32 h-32', text: 'text-8xl' },
+    large: { container: 'w-48 h-48', text: 'text-9xl' },
+  };
+
+  // Composant interne pour afficher le mème (emoji ou image)
+  const MemeContent = ({ sizeName }) => {
+    const { container, text } = sizeClasses[sizeName];
+
+    if (meme.url) {
+      return (
+        <img
+          src={meme.url}
+          alt={meme.alt}
+          className={`${container} object-contain rounded-lg shadow-lg`}
+          onError={(e) => {
+            e.target.style.display = 'none';
+          }}
+        />
+      );
+    }
+
+    return (
+      <div className={`${container} ${text} flex items-center justify-center`}>
+        {meme.emoji || '🎯'}
+      </div>
+    );
   };
 
   // Style popup (modal avec overlay)
@@ -80,16 +104,9 @@ export default function MemeDisplay({
             <Sparkles className="w-8 h-8 text-primary animate-pulse" />
           </div>
 
-          {/* Meme image */}
+          {/* Meme emoji/image */}
           <div className="flex justify-center mb-6">
-            <img
-              src={meme.url}
-              alt={meme.alt}
-              className={`${sizeClasses[size]} object-contain rounded-lg shadow-lg`}
-              onError={(e) => {
-                e.target.src = 'https://via.placeholder.com/200?text=Meme';
-              }}
-            />
+            <MemeContent sizeName={size} />
           </div>
 
           {/* Message */}
@@ -143,15 +160,10 @@ export default function MemeDisplay({
         }`}
       >
         <div className="flex items-center gap-4">
-          {/* Meme image */}
-          <img
-            src={meme.url}
-            alt={meme.alt}
-            className={`${sizeClasses[size]} object-contain rounded-lg flex-shrink-0`}
-            onError={(e) => {
-              e.target.src = 'https://via.placeholder.com/200?text=Meme';
-            }}
-          />
+          {/* Meme emoji/image */}
+          <div className="flex-shrink-0">
+            <MemeContent sizeName={size} />
+          </div>
 
           {/* Message */}
           <div className="flex-1">
@@ -200,15 +212,10 @@ export default function MemeDisplay({
         )}
 
         <div className="flex items-start gap-3">
-          {/* Meme image */}
-          <img
-            src={meme.url}
-            alt={meme.alt}
-            className={`${sizeClasses.small} object-contain rounded-lg flex-shrink-0`}
-            onError={(e) => {
-              e.target.src = 'https://via.placeholder.com/200?text=Meme';
-            }}
-          />
+          {/* Meme emoji/image */}
+          <div className="flex-shrink-0">
+            <MemeContent sizeName="small" />
+          </div>
 
           {/* Message */}
           <div className="flex-1 pr-6">
@@ -256,28 +263,43 @@ export default function MemeDisplay({
 }
 
 /**
- * Mini composant pour afficher juste l'image du mème (sans message)
+ * Mini composant pour afficher juste l'emoji du mème (sans message)
  */
 export function MemeImage({ meme, size = 'medium', className = '' }) {
   const sizeClasses = {
-    small: 'w-16 h-16',
-    medium: 'w-24 h-24',
-    large: 'w-32 h-32',
-    xlarge: 'w-48 h-48',
+    small: 'text-2xl w-8 h-8',
+    medium: 'text-4xl w-12 h-12',
+    large: 'text-6xl w-16 h-16',
+    xlarge: 'text-8xl w-24 h-24',
   };
 
   if (!meme) return null;
 
+  // Si le mème a une URL d'image, l'afficher
+  if (meme.url) {
+    return (
+      <img
+        src={meme.url}
+        alt={meme.alt}
+        title={meme.message || meme.alt}
+        className={`${sizeClasses[size].split(' ').slice(1).join(' ')} object-contain rounded-lg ${className}`}
+        onError={(e) => {
+          // Fallback vers emoji si l'image ne charge pas
+          e.target.style.display = 'none';
+          e.target.insertAdjacentHTML('afterend', `<div class="${sizeClasses[size]} flex items-center justify-center ${className}">${meme.emoji || '🎯'}</div>`);
+        }}
+      />
+    );
+  }
+
+  // Sinon afficher l'emoji
   return (
-    <img
-      src={meme.url}
-      alt={meme.alt}
+    <div
+      className={`${sizeClasses[size]} flex items-center justify-center ${className}`}
       title={meme.message || meme.alt}
-      className={`${sizeClasses[size]} object-contain rounded-lg ${className}`}
-      onError={(e) => {
-        e.target.src = 'https://via.placeholder.com/200?text=Meme';
-      }}
-    />
+    >
+      {meme.emoji || '🎯'}
+    </div>
   );
 }
 

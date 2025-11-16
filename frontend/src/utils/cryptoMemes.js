@@ -3,33 +3,36 @@
 /**
  * Collection de mèmes crypto pour gamification
  * Catégories: wojak, gigachad, success, fail, thinking, diamond hands, etc.
+ *
+ * Note: Utilise des emojis en attendant l'upload d'images personnalisées
+ * Alternative: Créer un dossier /public/memes/ avec les vraies images
  */
 
 export const CRYPTO_MEMES = {
   // Wojak variations
   wojak: {
     crying: {
-      url: 'https://i.imgur.com/yXEiYQ7.png',
+      emoji: '😭',
       alt: 'Crying Wojak',
       usage: 'losses, bad trades, market crash',
     },
     pink: {
-      url: 'https://i.imgur.com/9TK2TSC.png',
+      emoji: '😱',
       alt: 'Pink Wojak',
       usage: 'extreme losses, panic selling',
     },
     cope: {
-      url: 'https://i.imgur.com/rKFBXJo.png',
+      emoji: '😤',
       alt: 'Cope Wojak',
       usage: 'rationalizing losses, copium',
     },
     smug: {
-      url: 'https://i.imgur.com/6PlUYOp.png',
+      emoji: '😏',
       alt: 'Smug Wojak',
       usage: 'small wins, thinking you\'re smart',
     },
     rage: {
-      url: 'https://i.imgur.com/kGWKc7L.png',
+      emoji: '😡',
       alt: 'Rage Wojak',
       usage: 'sold too early, missed pump',
     },
@@ -38,17 +41,17 @@ export const CRYPTO_MEMES = {
   // Gigachad variations
   gigachad: {
     default: {
-      url: 'https://i.imgur.com/JkuHdKC.png',
+      emoji: '💪',
       alt: 'Gigachad',
       usage: 'big wins, diamond hands, hodl',
     },
     yes: {
-      url: 'https://i.imgur.com/9FZW3hK.png',
+      emoji: '😎',
       alt: 'Yes Chad',
       usage: 'confident trades, ignoring FUD',
     },
     crypto: {
-      url: 'https://i.imgur.com/LR8VrT7.png',
+      emoji: '🗿',
       alt: 'Crypto Chad',
       usage: 'successful DCA, buying the dip',
     },
@@ -57,22 +60,22 @@ export const CRYPTO_MEMES = {
   // Pepe variations
   pepe: {
     happy: {
-      url: 'https://i.imgur.com/uJk91UY.png',
+      emoji: '😊',
       alt: 'Happy Pepe',
       usage: 'moderate gains, good vibes',
     },
     sad: {
-      url: 'https://i.imgur.com/X4Hq8Le.png',
+      emoji: '😔',
       alt: 'Sad Pepe',
       usage: 'small losses, red days',
     },
     think: {
-      url: 'https://i.imgur.com/x7aBctP.png',
+      emoji: '🤔',
       alt: 'Thinking Pepe',
       usage: 'analyzing charts, planning trades',
     },
     rocket: {
-      url: 'https://i.imgur.com/mZHDqVs.png',
+      emoji: '🚀',
       alt: 'Rocket Pepe',
       usage: 'pumping, moon soon, gains',
     },
@@ -81,27 +84,27 @@ export const CRYPTO_MEMES = {
   // Trading culture
   culture: {
     diamondHands: {
-      url: 'https://i.imgur.com/QxPyV0L.png',
+      emoji: '💎',
       alt: 'Diamond Hands',
       usage: 'holding through dip, strong conviction',
     },
     paperHands: {
-      url: 'https://i.imgur.com/8TlPSKN.png',
+      emoji: '📄',
       alt: 'Paper Hands',
       usage: 'selling too early, weak hands',
     },
     pumpIt: {
-      url: 'https://i.imgur.com/BydAwtD.png',
+      emoji: '📈',
       alt: 'Pump It',
       usage: 'market pumping, buying momentum',
     },
     dumpIt: {
-      url: 'https://i.imgur.com/kE7RQXF.png',
+      emoji: '📉',
       alt: 'Dump It',
       usage: 'market dumping, panic',
     },
     bogdanoff: {
-      url: 'https://i.imgur.com/I7m0ONF.png',
+      emoji: '👨‍🦲',
       alt: 'Bogdanoff',
       usage: 'market manipulation jokes, bad timing',
     },
@@ -110,17 +113,17 @@ export const CRYPTO_MEMES = {
   // Success/Motivation
   success: {
     stonks: {
-      url: 'https://i.imgur.com/s46dOcC.png',
+      emoji: '🤑',
       alt: 'Stonks',
       usage: 'profits, gains, portfolio up',
     },
     notStonks: {
-      url: 'https://i.imgur.com/9oBNXNu.png',
+      emoji: '📉',
       alt: 'Not Stonks',
       usage: 'losses, portfolio down, red',
     },
     brain: {
-      url: 'https://i.imgur.com/Z0iJesJ.png',
+      emoji: '🧠',
       alt: 'Expanding Brain',
       usage: 'learning progression, strategy evolution',
     },
@@ -129,12 +132,12 @@ export const CRYPTO_MEMES = {
   // Doge/Shiba
   doge: {
     rich: {
-      url: 'https://i.imgur.com/YvBWfPm.png',
+      emoji: '🐕',
       alt: 'Rich Doge',
       usage: 'big profits, whale status',
     },
     thinking: {
-      url: 'https://i.imgur.com/6CZ6rUg.png',
+      emoji: '🤓',
       alt: 'Thinking Doge',
       usage: 'strategy planning, market analysis',
     },
