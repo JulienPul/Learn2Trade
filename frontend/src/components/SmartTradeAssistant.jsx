@@ -1,10 +1,11 @@
 import { useState, useMemo } from 'react';
-import { PieChart, Lightbulb, AlertCircle, ChevronRight, TrendingUp, TrendingDown, AlertTriangle, Activity } from 'lucide-react';
+import { PieChart, Lightbulb, AlertCircle, ChevronRight, TrendingUp, TrendingDown, AlertTriangle, Activity, Info } from 'lucide-react';
 import CardBase from './ui/CardBase';
 import CryptoLogo from './CryptoLogo';
 import MiniChart from './MiniChart';
 import { useCryptoData } from '../hooks/useCryptoData';
 import { useAdvancedSignals } from '../hooks/useAdvancedSignals';
+import TechnicalAnalysisModal from './TechnicalAnalysisModal';
 
 const TABS = [
   { id: 'analytics', label: 'Analytics', icon: PieChart },
@@ -33,6 +34,7 @@ const calculateConfidence = (change24h, volume24h) => {
 
 export default function SmartTradeAssistant({ positions = [], totalValue = 0 }) {
   const [activeTab, setActiveTab] = useState('analytics');
+  const [selectedCrypto, setSelectedCrypto] = useState(null);
 
   // Récupération des données crypto en temps réel
   const { data: cryptoData, loading: cryptoLoading } = useCryptoData();
@@ -519,7 +521,7 @@ export default function SmartTradeAssistant({ positions = [], totalValue = 0 }) 
               </div>
 
               {/* Raisons */}
-              <div className="space-y-1">
+              <div className="space-y-1 mb-3">
                 {suggestion.reasons.map((reason, i) => (
                   <div key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
                     <ChevronRight className="w-3 h-3 mt-0.5 shrink-0" />
@@ -527,6 +529,19 @@ export default function SmartTradeAssistant({ positions = [], totalValue = 0 }) 
                   </div>
                 ))}
               </div>
+
+              {/* Bouton Analyse Complète */}
+              <button
+                onClick={() => setSelectedCrypto({
+                  symbol: suggestion.symbol,
+                  price: suggestion.price,
+                  change24h: suggestion.change24h
+                })}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors text-sm font-medium"
+              >
+                <Info className="w-4 h-4" />
+                Voir l'analyse technique complète
+              </button>
             </div>
           </div>
         );
@@ -594,6 +609,16 @@ export default function SmartTradeAssistant({ positions = [], totalValue = 0 }) 
           <span>Données éducatives • Pas de conseils financiers</span>
         </div>
       </div>
+
+      {/* Modale d'analyse technique détaillée */}
+      {selectedCrypto && (
+        <TechnicalAnalysisModal
+          symbol={selectedCrypto.symbol}
+          price={selectedCrypto.price}
+          change24h={selectedCrypto.change24h}
+          onClose={() => setSelectedCrypto(null)}
+        />
+      )}
     </CardBase>
   );
 }
