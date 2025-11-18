@@ -132,60 +132,50 @@ export default function SmartTradeAssistant({ positions = [], totalValue = 0 }) 
 
       // Alertes basées sur les positions actuelles
       if (hasPosition && position) {
-        // Calculer PnL si pas déjà présent
-        let pnl = Number(position.unrealized_pnl_abs);
-        let pnlPct = Number(position.unrealized_pnl_pct);
+        // Récupérer les valeurs PnL (peuvent être des strings ou des numbers)
+        let pnl = position.unrealized_pnl_abs ? Number(position.unrealized_pnl_abs) : 0;
+        let pnlPct = position.unrealized_pnl_pct ? Number(position.unrealized_pnl_pct) : 0;
 
-        // Si les valeurs ne sont pas définies, les calculer manuellement
-        if (isNaN(pnl) || isNaN(pnlPct)) {
-          const quantity = Number(position.quantity || 0);
-          const avgPrice = Number(position.average_price || position.avg_price || 0);
-          const currentPrice = data.price;
+        console.log(`📊 [Alerts] PnL pour ${symbol}:`, {
+          raw_pnl: position.unrealized_pnl_abs,
+          raw_pnlPct: position.unrealized_pnl_pct,
+          converted_pnl: pnl,
+          converted_pnlPct: pnlPct
+        });
 
-          if (quantity && avgPrice && currentPrice) {
-            pnl = (currentPrice - avgPrice) * quantity;
-            pnlPct = ((currentPrice - avgPrice) / avgPrice) * 100;
-
-            console.log(`📊 [Alerts] Calcul PnL pour ${symbol}:`, {
-              quantity,
-              avgPrice,
-              currentPrice,
-              pnl: pnl.toFixed(2),
-              pnlPct: pnlPct.toFixed(2)
-            });
-          } else {
-            pnl = 0;
-            pnlPct = 0;
-          }
-        }
-
-        // Alerte si grosse perte sur position ouverte (seuil à -5%)
-        if (pnl < 0 && pnlPct < -5) {
+        // Alerte si perte sur position ouverte (seuil à -2%)
+        if (pnl < 0 && pnlPct < -2) {
           alerts.push({
             type: 'danger',
-            message: `Position en perte ${pnlPct.toFixed(1)}% - Envisager stop-loss`
+            message: `Position en perte ${pnlPct.toFixed(1)}% - Surveiller le stop-loss`
           });
         }
-        // Alerte si bon profit à sécuriser (seuil à +8%)
-        else if (pnl > 0 && pnlPct > 8) {
+        // Alerte si profit à sécuriser (seuil à +3%)
+        else if (pnl > 0 && pnlPct > 3) {
           alerts.push({
             type: 'success',
-            message: `Position en profit ${pnlPct.toFixed(1)}% - Envisager prise de bénéfices`
+            message: `Position en profit ${pnlPct.toFixed(1)}% - Opportunité de prise de bénéfices`
           });
         }
 
         // Alerte basée sur la tendance 24h pour les positions
-        if (data.change24h < -5) {
-          // Forte baisse sur une position
+        if (data.change24h < -3) {
+          // Baisse significative sur une position
           alerts.push({
             type: 'warning',
-            message: `Forte baisse (-${Math.abs(data.change24h).toFixed(1)}%) - Surveiller la position`
+            message: `Baisse ${data.change24h.toFixed(1)}% (24h) - Surveiller la position`
           });
-        } else if (data.change24h > 5 && pnl > 0) {
-          // Forte hausse + position profitable
+        } else if (data.change24h > 3 && pnl > 0) {
+          // Hausse significative + position profitable
           alerts.push({
             type: 'success',
-            message: `Forte hausse (+${data.change24h.toFixed(1)}%) - Opportunité de vente`
+            message: `Hausse +${data.change24h.toFixed(1)}% (24h) - Opportunité de vente`
+          });
+        } else if (data.change24h > 5) {
+          // Très forte hausse même sans profit
+          alerts.push({
+            type: 'success',
+            message: `Forte hausse +${data.change24h.toFixed(1)}% (24h) - Momentum positif`
           });
         }
       }
